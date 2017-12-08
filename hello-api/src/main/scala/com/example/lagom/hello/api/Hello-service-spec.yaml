@@ -1,0 +1,184 @@
+swagger: '2.0'
+info:
+  version: '2.0.0'
+  title: 'hello service'
+  description: 'hello service'
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+basePath: /api/rest/v2
+schemes:
+  - https
+paths:
+  /hellos:
+    get:
+      summary: PUBLIC API - Fetch all hellos
+      description: PUBLIC API - Fetch all hellos.
+      operationId: publicFetchAllhello
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -  $ref: '#/parameters/token'
+      responses:
+        200:
+          description: A list of hellos
+          schema:
+            type: array
+            items:
+               $ref: '#/definitions/Hello'
+        403:
+          description: 'Call Forbidden'
+          schema:
+             $ref: '#/definitions/ErrorResponse'
+  /hellos/hello:
+    post:
+      summary: INTERNAL API - Create one specific hello
+      description: INTERNAL API - Create one specific hello
+      operationId: internalCreatehello
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -  $ref: '#/parameters/token'
+        - name: "hello"
+          in: "body"
+          description: "hello to update"
+          required: true
+          schema:
+             $ref: '#/definitions/Hello'
+      responses:
+        200:
+          description: created hello
+          schema:
+             $ref: '#/definitions/Hello'
+        403:
+          description: 'Call Forbidden'
+          schema:
+             $ref: '#/definitions/ErrorResponse'
+  /hellos/hello/{id}:
+    get:
+      summary: PUBLIC API - Fetch one specific hello
+      description: PUBLIC API - Fetch one specific hello
+      operationId: publicFetchOnehello
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -  $ref: '#/parameters/token'
+        - name: "id"
+          in: "path"
+          description: "UUID of the hello to fetch"
+          required: true
+          type: string
+      responses:
+        200:
+          description: one hello
+          schema:
+             $ref: '#/definitions/Hello'
+        403:
+          description: 'Call Forbidden'
+          schema:
+             $ref: '#/definitions/ErrorResponse'
+    patch:
+      summary: INTERNAL API - Update one specific hello
+      description: INTERNAL API - Update one specific hello
+      operationId: internalUpdateOnehello
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        -  $ref: '#/parameters/token'
+        - name: "id"
+          in: "path"
+          description: "UUID of the hello to update"
+          required: true
+          type: string
+        - name: "hello"
+          in: "body"
+          description: "hello to update"
+          required: true
+          schema:
+             $ref: '#/definitions/Hello'
+      responses:
+        200:
+          description: updated hello
+          schema:
+             $ref: '#/definitions/Hello'
+        403:
+          description: 'Call Forbidden'
+          schema:
+             $ref: '#/definitions/ErrorResponse'
+    delete:
+      summary: INTERNAL API - Remove one specific hello
+      description: INTERNAL API - Remove one specific hello
+      operationId: internalRemoveOnehello
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+        -  $ref: '#/parameters/token'
+        -
+          name: "id"
+          in: "path"
+          description: "UUID of the hello to remove"
+          required: true
+          type: string
+      responses:
+        200:
+          description: removed hello
+          schema:
+             $ref: '#/definitions/Hello'
+        403:
+          description: 'Call Forbidden'
+          schema:
+             $ref: '#/definitions/ErrorResponse'
+definitions:
+  Hello:
+    type: object
+    required:
+      - "id"
+    properties:
+      id:
+        type: string
+        description: unique id of Hello object
+        example: 6023ddf0-7834-4704-80a6-b0926e8b6b79
+      name:
+        type: string
+        description: name of this Hello
+        example: myHello
+      description:
+        type: string
+        description: description of this Hello
+        example: myHello is very useful
+  ErrorResponse:
+    type: object
+    required:
+      - "code"
+      - "error"
+      - "message"
+    properties:
+      code:
+        type: integer
+        description: http status code
+        example: 403
+      error:
+        type: string
+        description: error type
+        example: Forbidden
+      message:
+        type: string
+        description: error message
+        example: Unauthorized to access this page
+parameters:
+  token:
+    in: header
+    name: Authorization
+    required: true
+    type: string
+    pattern: '^Bearer [0-9a-fA-F]{32}$'
